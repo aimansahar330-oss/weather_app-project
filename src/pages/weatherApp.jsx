@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import ForcastState from "../components/forcastState";
 import HourlyForcast from "../components/hourlyForcast";
@@ -12,7 +13,6 @@ const WeatherApp = () => {
   const location = weather?.location;
   const current = weather?.current;
 
-  // Complete 7 days
   const forecastDays = (
     weather?.forecast?.forecastday || []
   ).slice(0, 7);
@@ -21,9 +21,9 @@ const WeatherApp = () => {
   // WEATHER ICON
   // =========================
 
- const getWeatherIcon = (icon) => {
-  return icon || "🌤️";
-};
+  const getWeatherIcon = (icon) => {
+    return icon || "🌤️";
+  };
 
   // =========================
   // 24 HOUR -> 12 HOUR
@@ -133,7 +133,6 @@ const WeatherApp = () => {
           ? `${Math.round(current.feelslike_c)}°C`
           : "--",
     },
-
     {
       title: "Humidity",
       value:
@@ -141,7 +140,6 @@ const WeatherApp = () => {
           ? `${current.humidity}%`
           : "--",
     },
-
     {
       title: "Wind",
       value:
@@ -149,15 +147,14 @@ const WeatherApp = () => {
           ? `${Math.round(current.wind_kph)} km/h`
           : "--",
     },
-
-   {
-  title: "Precipitation",
-  value:
-    current?.precip_mm !== undefined &&
-    current?.precip_mm !== null
-      ? `${current.precip_mm} mm`
-      : "0 mm",
-},
+    {
+      title: "Precipitation",
+      value:
+        current?.precip_mm !== undefined &&
+        current?.precip_mm !== null
+          ? `${current.precip_mm} mm`
+          : "0 mm",
+    },
   ];
 
   // =========================
@@ -220,10 +217,6 @@ const WeatherApp = () => {
 
     let hours = [];
 
-    // ---------------------------------
-    // TODAY
-    // ---------------------------------
-
     if (
       selectedDay === 0 &&
       location?.localtime
@@ -237,7 +230,6 @@ const WeatherApp = () => {
         localClock.split(":")[0]
       );
 
-      // Remaining hours of today
       const todayHours =
         selectedForecast.hour.filter(
           (hour) => {
@@ -257,7 +249,6 @@ const WeatherApp = () => {
           }
         );
 
-      // Next day hours
       const nextDayHours =
         forecastDays[1]?.hour || [];
 
@@ -266,13 +257,11 @@ const WeatherApp = () => {
         ...nextDayHours,
       ];
     } else {
-      // Selected day from dropdown
       hours = [
         ...(selectedForecast.hour || []),
       ];
     }
 
-    // Exactly 12 cards
     return hours
       .slice(0, 12)
       .map((hour) => {
@@ -305,7 +294,7 @@ const WeatherApp = () => {
 
   if (!weather) {
     return (
-      <div className="min-h-screen bg-blue-950 flex items-center justify-center text-white">
+      <div className="min-h-screen bg-blue-950 flex items-center justify-center text-white px-4">
         <div className="text-center">
           <div className="text-5xl mb-4">
             ☁️
@@ -324,19 +313,19 @@ const WeatherApp = () => {
   // =========================
 
   return (
-    <div className="min-h-screen bg-blue-950 text-white pb-12">
+    <div className="min-h-screen bg-blue-950 text-white pb-12 overflow-x-hidden">
 
       {/* =========================
           HEADER
       ========================= */}
 
-      <div className="pt-10 text-center">
+      <div className="pt-8 sm:pt-10 text-center px-4">
 
-        <h1 className="text-4xl font-extrabold tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
           Weather Now
         </h1>
 
-        <p className="text-gray-400 mt-2">
+        <p className="text-gray-400 mt-2 text-sm sm:text-base">
           Live weather, forecasts & hourly conditions
         </p>
 
@@ -346,11 +335,11 @@ const WeatherApp = () => {
           SEARCH
       ========================= */}
 
-      <div className="flex justify-center mt-7 px-4">
+      <div className="flex justify-center mt-6 sm:mt-7 px-4">
 
         <div className="flex items-center bg-white rounded-2xl overflow-hidden w-full max-w-2xl shadow-xl">
 
-          <FaSearch className="text-gray-500 ml-5" />
+          <FaSearch className="text-gray-500 ml-4 sm:ml-5 shrink-0" />
 
           <input
             type="text"
@@ -360,12 +349,12 @@ const WeatherApp = () => {
             }
             onKeyDown={handleKeyDown}
             placeholder="Search city..."
-            className="flex-1 px-4 py-4 text-gray-800 outline-none"
+            className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 text-gray-800 outline-none text-sm sm:text-base"
           />
 
           <button
             onClick={handleSearch}
-            className="bg-blue-600 hover:bg-blue-700 transition text-white px-7 py-4 font-semibold"
+            className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 sm:px-7 py-3 sm:py-4 font-semibold text-sm sm:text-base shrink-0"
           >
             Search
           </button>
@@ -378,7 +367,7 @@ const WeatherApp = () => {
           MAIN CONTENT
       ========================= */}
 
-      <div className="px-5 lg:px-16 xl:px-24 mt-2 flex gap-5">
+      <div className="px-4 sm:px-5 lg:px-16 xl:px-24 mt-2 flex flex-col lg:flex-row gap-5">
 
         {/* =========================
             LEFT COLUMN
@@ -390,7 +379,7 @@ const WeatherApp = () => {
               CURRENT WEATHER
           ========================= */}
 
-          <div className="w-full mt-10 bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-2xl text-white min-h-64 px-8 py-8 flex justify-between">
+          <div className="w-full mt-8 sm:mt-10 bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-2xl text-white min-h-64 px-5 sm:px-8 py-6 sm:py-8 flex flex-col sm:flex-row justify-between gap-6">
 
             {/* LOCATION */}
 
@@ -400,21 +389,21 @@ const WeatherApp = () => {
 
                 <div className="flex items-center gap-2">
 
-                  <FaMapMarkerAlt className="text-blue-400" />
+                  <FaMapMarkerAlt className="text-blue-400 shrink-0" />
 
-                  <h2 className="text-2xl font-bold">
+                  <h2 className="text-xl sm:text-2xl font-bold truncate">
                     {location?.name}
                   </h2>
 
                 </div>
 
-                <p className="text-yellow-400 mt-1">
+                <p className="text-yellow-400 mt-1 text-sm sm:text-base">
                   {location?.country}
                 </p>
 
               </div>
 
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-xs sm:text-sm mt-5 sm:mt-0">
                 {formatLocalDateTime(
                   location?.localtime
                 )}
@@ -424,15 +413,15 @@ const WeatherApp = () => {
 
             {/* CURRENT TEMPERATURE */}
 
-            <div className="flex items-center gap-7">
+            <div className="flex items-center gap-4 sm:gap-7">
 
-             <div className="text-7xl">
-  {current?.condition?.icon}
-</div>
+              <div className="text-5xl sm:text-7xl shrink-0">
+                {current?.condition?.icon}
+              </div>
 
-              <div>
+              <div className="min-w-0">
 
-                <h2 className="text-6xl font-extrabold">
+                <h2 className="text-4xl sm:text-6xl font-extrabold">
                   {current?.temp_c !==
                   undefined
                     ? `${Math.round(
@@ -441,7 +430,7 @@ const WeatherApp = () => {
                     : "--"}
                 </h2>
 
-                <p className="text-gray-300 mt-2">
+                <p className="text-gray-300 mt-2 text-sm sm:text-base">
                   Feels like{" "}
                   {current?.feelslike_c !==
                   undefined
@@ -451,7 +440,7 @@ const WeatherApp = () => {
                     : "--"}
                 </p>
 
-                <p className="text-blue-300 mt-1 font-medium">
+                <p className="text-blue-300 mt-1 font-medium text-sm sm:text-base">
                   {current?.condition?.text}
                 </p>
 
@@ -476,42 +465,56 @@ const WeatherApp = () => {
             HOURLY FORECAST
         ========================= */}
 
-        <HourlyForcast
-          hourlyForcast={hourlyForcast}
-          forecastDays={forecastDays}
-          selectedDay={selectedDay}
-          setSelectedDay={
-            setSelectedDay
-          }
-        />
+        <div className="w-full lg:w-72 shrink-0">
+
+          <HourlyForcast
+            hourlyForcast={hourlyForcast}
+            forecastDays={forecastDays}
+            selectedDay={selectedDay}
+            setSelectedDay={
+              setSelectedDay
+            }
+          />
+
+        </div>
 
       </div>
 
-      <footer className="mt-12 border-t border-gray-800 bg-gray-950/80 px-6 py-8">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* =========================
+          FOOTER
+      ========================= */}
 
-    <div className="text-center md:text-left">
-      <h2 className="text-lg font-bold text-white">
-        Weather Now
-      </h2>
+      <footer className="mt-10 sm:mt-12 border-t border-gray-800 bg-gray-950/80 px-4 sm:px-6 py-7 sm:py-8">
 
-      <p className="text-sm text-gray-400 mt-1">
-        Simple, accurate and real-time weather information.
-      </p>
-    </div>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
-    <div className="text-center md:text-right">
-      <p className="text-sm text-gray-400">
-        Weather data powered by Open-Meteo
-      </p>
+          <div className="text-center md:text-left">
 
-      <p className="text-xs text-gray-600 mt-1">
-        © {new Date().getFullYear()} Weather Now
-      </p>
-    </div>
+            <h2 className="text-lg font-bold text-white">
+              Weather Now
+            </h2>
 
-  </div>
-</footer>
+            <p className="text-sm text-gray-400 mt-1">
+              Simple, accurate and real-time weather information.
+            </p>
+
+          </div>
+
+          <div className="text-center md:text-right">
+
+            <p className="text-sm text-gray-400">
+              Weather data powered by Open-Meteo
+            </p>
+
+            <p className="text-xs text-gray-600 mt-1">
+              © {new Date().getFullYear()} Weather Now
+            </p>
+
+          </div>
+
+        </div>
+
+      </footer>
 
     </div>
   );
