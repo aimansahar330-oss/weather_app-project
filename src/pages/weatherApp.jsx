@@ -70,7 +70,7 @@ const WeatherApp = () => {
 
       alert(
         error.message ||
-          "Weather data load nahi ho saka."
+        "Weather data load nahi ho saka."
       );
     }
   };
@@ -151,7 +151,7 @@ const WeatherApp = () => {
       title: "Precipitation",
       value:
         current?.precip_mm !== undefined &&
-        current?.precip_mm !== null
+          current?.precip_mm !== null
           ? `${current.precip_mm} mm`
           : "0 mm",
     },
@@ -191,15 +191,15 @@ const WeatherApp = () => {
         maxTem:
           day.day?.maxtemp_c !== undefined
             ? `${Math.round(
-                day.day.maxtemp_c
-              )}°`
+              day.day.maxtemp_c
+            )}°`
             : "--",
 
         minTem:
           day.day?.mintemp_c !== undefined
             ? `${Math.round(
-                day.day.mintemp_c
-              )}°`
+              day.day.mintemp_c
+            )}°`
             : "--",
       };
     }
@@ -274,8 +274,8 @@ const WeatherApp = () => {
           tem:
             hour.temp_c !== undefined
               ? `${Math.round(
-                  hour.temp_c
-                )}°C`
+                hour.temp_c
+              )}°C`
               : "--",
 
           icon: getWeatherIcon(
@@ -423,20 +423,20 @@ const WeatherApp = () => {
 
                 <h2 className="text-4xl sm:text-6xl font-extrabold">
                   {current?.temp_c !==
-                  undefined
+                    undefined
                     ? `${Math.round(
-                        current.temp_c
-                      )}°C`
+                      current.temp_c
+                    )}°C`
                     : "--"}
                 </h2>
 
                 <p className="text-gray-300 mt-2 text-sm sm:text-base">
                   Feels like{" "}
                   {current?.feelslike_c !==
-                  undefined
+                    undefined
                     ? `${Math.round(
-                        current.feelslike_c
-                      )}°C`
+                      current.feelslike_c
+                    )}°C`
                     : "--"}
                 </p>
 
@@ -459,6 +459,7 @@ const WeatherApp = () => {
             dailyForcast={dailyForcast}
           />
 
+
         </div>
 
         {/* =========================
@@ -471,11 +472,8 @@ const WeatherApp = () => {
             hourlyForcast={hourlyForcast}
             forecastDays={forecastDays}
             selectedDay={selectedDay}
-            setSelectedDay={
-              setSelectedDay
-            }
+            setSelectedDay={setSelectedDay}
           />
-
         </div>
 
       </div>

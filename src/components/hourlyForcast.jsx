@@ -1,4 +1,3 @@
-
 import React from "react";
 
 const HourlyForcast = ({
@@ -11,6 +10,7 @@ const HourlyForcast = ({
     <div
       className="
         w-full
+        lg:w-72
         mt-8
         lg:mt-12
         mb-6
@@ -20,6 +20,8 @@ const HourlyForcast = ({
         rounded-2xl
         p-4
         text-white
+        h-[620px]
+        lg:shrink-0
       "
     >
 
@@ -29,7 +31,7 @@ const HourlyForcast = ({
 
       <div className="flex gap-2 justify-between items-center">
 
-        <h2 className="text-sm sm:text-base font-semibold">
+        <h2 className="text-sm sm:text-base font-semibold mb-4">
           Hourly Forecast
         </h2>
 
@@ -43,6 +45,7 @@ const HourlyForcast = ({
           className="
             bg-gray-800
             border
+            mb-4
             border-gray-600
             rounded-lg
             px-2
@@ -79,59 +82,56 @@ const HourlyForcast = ({
       </div>
 
       {/* =========================
-          HORIZONTAL HOURLY CARDS
+          HOURLY SCROLL AREA
       ========================= */}
 
-      <div className="overflow-x-auto pb-3 mt-4">
+      <div className="overflow-y-auto h-[550px] pr-1">
 
-        <div className="flex gap-3 w-max">
+        {hourlyForcast.map(
+          (hour, index) => (
+            <div
+              key={index}
+              className="
+                bg-gray-800
+                border
+                mb-3
+                border-gray-600
+                rounded-lg
+                px-4
+                sm:px-5
+                py-3
+                flex
+                justify-between
+                items-center
+                text-sm
+                hover:border-blue-500/50
+                transition
+              "
+            >
 
-          {hourlyForcast.map(
-            (hour, index) => (
-              <div
-                key={index}
-                className="
-                  bg-gray-800
-                  border
-                  border-gray-600
-                  rounded-xl
-                  px-5
-                  py-4
-                  w-32
-                  sm:w-36
-                  min-h-24
-                  shrink-0
-                  flex
-                  flex-col
-                  justify-between
-                  hover:border-blue-500/50
-                  transition
-                "
-              >
+              {/* TIME + ICON */}
 
-                {/* TIME */}
+              <div className="flex items-center gap-2 min-w-0">
 
-                <h2 className="text-white text-xs sm:text-sm text-center">
-                  {hour.time}
-                </h2>
-
-                {/* ICON */}
-
-                <div className="text-2xl text-center my-1">
+                <div className="text-lg sm:text-xl w-7 text-center shrink-0">
                   {hour.icon}
                 </div>
 
-                {/* TEMP */}
-
-                <h3 className="font-semibold text-sm text-center">
-                  {hour.tem}
-                </h3>
+                <h2 className="text-white text-xs sm:text-sm whitespace-nowrap">
+                  {hour.time}
+                </h2>
 
               </div>
-            )
-          )}
 
-        </div>
+              {/* TEMPERATURE */}
+
+              <h3 className="font-semibold text-xs sm:text-sm ml-2 whitespace-nowrap">
+                {hour.tem}
+              </h3>
+
+            </div>
+          )
+        )}
 
       </div>
 
