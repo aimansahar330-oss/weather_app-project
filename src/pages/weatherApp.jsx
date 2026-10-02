@@ -1,172 +1,520 @@
-import React from 'react';
-import ForcastState from '../components/forcastState';
-import HourlyForcast from '../components/hourlyForcast';
-import { IoMdRainy } from 'react-icons/io';
-import { MdSearch, MdMyLocation } from 'react-icons/md';
-import { MdAccessibilityNew, MdCloud, MdOutlineSnowboarding, MdOutlineWbSunny, MdSunnySnowing, MdThunderstorm, MdTsunami, MdWaterDrop, MdWbCloudy, MdWbShade, MdWbSunny, MdWbTwilight } from 'react-icons/md';
+import React, { useEffect, useState } from "react";
+import ForcastState from "../components/forcastState";
+import HourlyForcast from "../components/hourlyForcast";
+import { FaSearch, FaMapMarkerAlt } from "react-icons/fa";
+import { getWeather } from "../services/weatherService";
 
+const WeatherApp = () => {
+  const [weather, setWeather] = useState(null);
+  const [city, setCity] = useState("");
+  const [selectedDay, setSelectedDay] = useState(0);
 
-const WeatherApp = ()  => {
+  const location = weather?.location;
+  const current = weather?.current;
+
+  // Complete 7 days
+  const forecastDays = (
+    weather?.forecast?.forecastday || []
+  ).slice(0, 7);
+
+  // =========================
+  // WEATHER ICON
+  // =========================
+
+ const getWeatherIcon = (icon) => {
+  return icon || "🌤️";
+};
+
+  // =========================
+  // 24 HOUR -> 12 HOUR
+  // =========================
+
+  const format12Hour = (time) => {
+    if (!time) return "";
+
+    const [hour, minute] = time.split(":").map(Number);
+
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 || 12;
+
+    return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
+  };
+
+  // =========================
+  // LOCAL DATE + TIME
+  // =========================
+
+  const formatLocalDateTime = (localtime) => {
+    if (!localtime) return "";
+
+    const [date, time] = localtime.split(" ");
+
+    return `${date} • ${format12Hour(time)}`;
+  };
+
+  // =========================
+  // SEARCH WEATHER
+  // =========================
+
+  const searchWeather = async (searchCity) => {
+    if (!searchCity?.trim()) return;
+
+    try {
+      const data = await getWeather(searchCity.trim());
+
+      setWeather(data);
+      setSelectedDay(0);
+      setCity("");
+    } catch (error) {
+      console.error("Weather error:", error);
+
+      alert(
+        error.message ||
+          "Weather data load nahi ho saka."
+      );
+    }
+  };
+
+  // =========================
+  // INITIAL WEATHER
+  // =========================
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      searchWeather("Lahore");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        try {
+          const data = await getWeather(
+            `${latitude},${longitude}`
+          );
+
+          setWeather(data);
+        } catch (error) {
+          console.error(error);
+          searchWeather("Lahore");
+        }
+      },
+      () => {
+        searchWeather("Lahore");
+      }
+    );
+  }, []);
+
+  // =========================
+  // SEARCH HANDLERS
+  // =========================
+
+  const handleSearch = () => {
+    searchWeather(city);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  // =========================
+  // WEATHER STATS
+  // =========================
+
   const weatherStats = [
     {
       title: "Feels like",
-      value: "60%"
+      value:
+        current?.feelslike_c !== undefined
+          ? `${Math.round(current.feelslike_c)}°C`
+          : "--",
     },
+
     {
       title: "Humidity",
-      value: "48%"
+      value:
+        current?.humidity !== undefined
+          ? `${current.humidity}%`
+          : "--",
     },
+
     {
       title: "Wind",
-      value: "16km/h"
-    },
-    {
-      title: "precipitation",
-      value: "0mm"
-    },
-  ]
-
-  const dailyForcast = [
-    {
-      day: "Mon",
-      icon: <MdWbSunny className='text-yellow-400' />,
-      tem: "25°",
-      tem: "25°"
-    },
-    {
-      day: "Tue",
-      icon: <MdWbCloudy  className='text-gray-300'/> ,
-      tem: "25°",
-      tem: "25°"
-    },
-    {
-      day: "Wed",
-      icon: <MdThunderstorm className='text-blue-400' />,
-      tem: "25°",
-      tem: "25°"
-    },
-    {
-      day: "Thur",
-      icon: <MdWaterDrop  className='text-gray-40'/>,
-      tem: "25°",
-      tem: "25°"
-    },
-    {
-      day: "Fri",
-      icon: <IoMdRainy  className='text-yellow-400'/>,
-      tem: "25°",
-      tem: "25°"
-    },
-    {
-      day: "Sat",
-      icon: <MdWbSunny />,
-      tem: "25°",
-      tem: "25°"
-    },
-    {
-      day: "Sun",
-      icon: <MdCloud className='text-gray-400' />,
-      tem: "25°",
-      tem: "25°"
+      value:
+        current?.wind_kph !== undefined
+          ? `${Math.round(current.wind_kph)} km/h`
+          : "--",
     },
 
-  ]
+   {
+  title: "Precipitation",
+  value:
+    current?.precip_mm !== undefined &&
+    current?.precip_mm !== null
+      ? `${current.precip_mm} mm`
+      : "0 mm",
+},
+  ];
 
-  const hourlyForcast = [
-    {
-      icon: <MdCloud />,
-      time: "3pm",
-      tem: "25°"
-    },
-     {
-      icon: <MdSunnySnowing />,
-      time: "3pm",
-      tem: "25°"
-    },
-     {
-      icon: <MdWbSunny  className='text-yellow-400'/>,
-      time: "3pm",
-      tem: "25°"
-    },
-     {
-      icon: <MdCloud  className='text-gray-400'/>,
-      time: "3pm",
-      tem: "25°"
-    },
-    {
-      icon: <MdWbTwilight  className='text-yellow-400'/>,
-      time: "3pm",
-      tem: "25°"
-    },
-    {
-      icon: <MdWbSunny  className='text-yellow-400'/>,
-      time: "3pm",
-      tem: "25°"
-    },
-     {
-      icon: <MdWbSunny  className='text-yellow-400'/>,
-      time: "3pm",
-      tem: "25°"
-    },
-     {
-      icon: <MdWbSunny  className='text-yellow-400'/>,
-      time: "3pm",
-      tem: "25°"
-    },
-  ]
+  // =========================
+  // 7 DAY FORECAST
+  // =========================
 
+  const dailyForcast = forecastDays.map(
+    (day, index) => {
+      let dayName;
 
+      if (index === 0) {
+        dayName = "Today";
+      } else {
+        dayName = new Date(
+          `${day.date}T00:00:00`
+        ).toLocaleDateString(
+          "en-US",
+          {
+            weekday: "long",
+          }
+        );
+      }
 
-  return (
-    <div className='w-full bg-blue-950'>
-    
-      <h1 className='text-white px-12 py-12 font-bold text-2xl'>Weather Now</h1>
-      <p className='text-white font-bold text-3xl text-center'>How the sky looking today?</p>
+      return {
+        day: dayName,
 
-      {/* search bar */}
+        icon: getWeatherIcon(
+          day.day?.condition?.icon
+        ),
 
-      <div className='flex justify-center mt-6'>
-        <div className='flex items-center gap-3 bg-white/10 backdrop-blur-lg border border-gray-600 rounded-2xl py-3 px-4 w-96'>
-        <MdSearch className='text-gray-300 text-2xl' />
+        condition:
+          day.day?.condition?.text || "",
 
-        <input type="text" placeholder='search city'
-        className='bg-transparent outline-none text-white w-full placeholder-gray-400' />
+        maxTem:
+          day.day?.maxtemp_c !== undefined
+            ? `${Math.round(
+                day.day.maxtemp_c
+              )}°`
+            : "--",
 
-        <button className="bg-blue-800/90 hover:bg-blue-600 p-2 rounded-lg">
-          <MdMyLocation className="text-white text-xl" />
-        </button>
-        </div>
+        minTem:
+          day.day?.mintemp_c !== undefined
+            ? `${Math.round(
+                day.day.mintemp_c
+              )}°`
+            : "--",
+      };
+    }
+  );
 
-        {/* start */}
-      
-      </div>
-      <div className='px-24 flex gap-4'>
+  // =========================
+  // 12 HOURLY FORECAST
+  // =========================
 
-        <div className='flex flex-col flex-1'>
-      {/* banner */}
-      <div className='w-190 h-64 mt-12 flex items-center justify-between rounded-2xl px-8 bg-blue-900/90'>
-        <div>
-        <h2 className='text-white text-2xl font-medium'>Pakistan, Islamabad</h2>
-        <h2 className='text-gray-300 text-lg mt-2'> Tuesday 7 April,2026</h2>
-        </div>
-         {/* Right Side  of banner*/}
-          <div className="flex items-center gap-8">
-            <MdWbSunny className="text-yellow-400 text-7xl" />
-            <h1 className="text-white text-6xl font-semibold">20°</h1>
+  const hourlyForcast = (() => {
+    const selectedForecast =
+      forecastDays[selectedDay];
+
+    if (!selectedForecast) return [];
+
+    let hours = [];
+
+    // ---------------------------------
+    // TODAY
+    // ---------------------------------
+
+    if (
+      selectedDay === 0 &&
+      location?.localtime
+    ) {
+      const [
+        localDate,
+        localClock,
+      ] = location.localtime.split(" ");
+
+      const currentHour = Number(
+        localClock.split(":")[0]
+      );
+
+      // Remaining hours of today
+      const todayHours =
+        selectedForecast.hour.filter(
+          (hour) => {
+            const [
+              hourDate,
+              hourClock,
+            ] = hour.time.split(" ");
+
+            const hourNumber = Number(
+              hourClock.split(":")[0]
+            );
+
+            return (
+              hourDate === localDate &&
+              hourNumber >= currentHour
+            );
+          }
+        );
+
+      // Next day hours
+      const nextDayHours =
+        forecastDays[1]?.hour || [];
+
+      hours = [
+        ...todayHours,
+        ...nextDayHours,
+      ];
+    } else {
+      // Selected day from dropdown
+      hours = [
+        ...(selectedForecast.hour || []),
+      ];
+    }
+
+    // Exactly 12 cards
+    return hours
+      .slice(0, 12)
+      .map((hour) => {
+        const timeOnly =
+          hour.time.split(" ")[1];
+
+        return {
+          time: format12Hour(timeOnly),
+
+          tem:
+            hour.temp_c !== undefined
+              ? `${Math.round(
+                  hour.temp_c
+                )}°C`
+              : "--",
+
+          icon: getWeatherIcon(
+            hour.condition?.icon
+          ),
+
+          condition:
+            hour.condition?.text || "",
+        };
+      });
+  })();
+
+  // =========================
+  // LOADING
+  // =========================
+
+  if (!weather) {
+    return (
+      <div className="min-h-screen bg-blue-950 flex items-center justify-center text-white">
+        <div className="text-center">
+          <div className="text-5xl mb-4">
+            ☁️
           </div>
 
+          <p className="text-lg">
+            Loading weather...
+          </p>
+        </div>
       </div>
-      <ForcastState weatherStats={weatherStats}
-      dailyForcast={dailyForcast} />
-      
-       </div>
-       <HourlyForcast hourlyForcast={hourlyForcast} />
-      
-      
+    );
+  }
+
+  // =========================
+  // UI
+  // =========================
+
+  return (
+    <div className="min-h-screen bg-blue-950 text-white pb-12">
+
+      {/* =========================
+          HEADER
+      ========================= */}
+
+      <div className="pt-10 text-center">
+
+        <h1 className="text-4xl font-extrabold tracking-tight">
+          Weather Now
+        </h1>
+
+        <p className="text-gray-400 mt-2">
+          Live weather, forecasts & hourly conditions
+        </p>
+
       </div>
+
+      {/* =========================
+          SEARCH
+      ========================= */}
+
+      <div className="flex justify-center mt-7 px-4">
+
+        <div className="flex items-center bg-white rounded-2xl overflow-hidden w-full max-w-2xl shadow-xl">
+
+          <FaSearch className="text-gray-500 ml-5" />
+
+          <input
+            type="text"
+            value={city}
+            onChange={(e) =>
+              setCity(e.target.value)
+            }
+            onKeyDown={handleKeyDown}
+            placeholder="Search city..."
+            className="flex-1 px-4 py-4 text-gray-800 outline-none"
+          />
+
+          <button
+            onClick={handleSearch}
+            className="bg-blue-600 hover:bg-blue-700 transition text-white px-7 py-4 font-semibold"
+          >
+            Search
+          </button>
+
+        </div>
+
+      </div>
+
+      {/* =========================
+          MAIN CONTENT
+      ========================= */}
+
+      <div className="px-5 lg:px-16 xl:px-24 mt-2 flex gap-5">
+
+        {/* =========================
+            LEFT COLUMN
+        ========================= */}
+
+        <div className="flex flex-col flex-1 min-w-0">
+
+          {/* =========================
+              CURRENT WEATHER
+          ========================= */}
+
+          <div className="w-full mt-10 bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-2xl text-white min-h-64 px-8 py-8 flex justify-between">
+
+            {/* LOCATION */}
+
+            <div className="flex flex-col justify-between">
+
+              <div>
+
+                <div className="flex items-center gap-2">
+
+                  <FaMapMarkerAlt className="text-blue-400" />
+
+                  <h2 className="text-2xl font-bold">
+                    {location?.name}
+                  </h2>
+
+                </div>
+
+                <p className="text-yellow-400 mt-1">
+                  {location?.country}
+                </p>
+
+              </div>
+
+              <p className="text-gray-400 text-sm">
+                {formatLocalDateTime(
+                  location?.localtime
+                )}
+              </p>
+
+            </div>
+
+            {/* CURRENT TEMPERATURE */}
+
+            <div className="flex items-center gap-7">
+
+             <div className="text-7xl">
+  {current?.condition?.icon}
+</div>
+
+              <div>
+
+                <h2 className="text-6xl font-extrabold">
+                  {current?.temp_c !==
+                  undefined
+                    ? `${Math.round(
+                        current.temp_c
+                      )}°C`
+                    : "--"}
+                </h2>
+
+                <p className="text-gray-300 mt-2">
+                  Feels like{" "}
+                  {current?.feelslike_c !==
+                  undefined
+                    ? `${Math.round(
+                        current.feelslike_c
+                      )}°C`
+                    : "--"}
+                </p>
+
+                <p className="text-blue-300 mt-1 font-medium">
+                  {current?.condition?.text}
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* =========================
+              STATS + WEEKLY
+          ========================= */}
+
+          <ForcastState
+            weatherStats={weatherStats}
+            dailyForcast={dailyForcast}
+          />
+
+        </div>
+
+        {/* =========================
+            HOURLY FORECAST
+        ========================= */}
+
+        <HourlyForcast
+          hourlyForcast={hourlyForcast}
+          forecastDays={forecastDays}
+          selectedDay={selectedDay}
+          setSelectedDay={
+            setSelectedDay
+          }
+        />
+
+      </div>
+
+      <footer className="mt-12 border-t border-gray-800 bg-gray-950/80 px-6 py-8">
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+
+    <div className="text-center md:text-left">
+      <h2 className="text-lg font-bold text-white">
+        Weather Now
+      </h2>
+
+      <p className="text-sm text-gray-400 mt-1">
+        Simple, accurate and real-time weather information.
+      </p>
     </div>
-    
-  )
-}
+
+    <div className="text-center md:text-right">
+      <p className="text-sm text-gray-400">
+        Weather data powered by Open-Meteo
+      </p>
+
+      <p className="text-xs text-gray-600 mt-1">
+        © {new Date().getFullYear()} Weather Now
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+    </div>
+  );
+};
 
 export default WeatherApp;
