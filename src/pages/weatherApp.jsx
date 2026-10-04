@@ -389,23 +389,21 @@ const WeatherApp = () => {
 
                 <div className="flex items-center gap-2">
 
-                  <FaMapMarkerAlt className="text-blue-400 shrink-0" />
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    {weather?.location?.name}
 
-                  <h2 className="text-xl sm:text-2xl font-bold truncate">
-                    {location?.name}
+                    {weather?.location?.country && (
+                      <span className="text-blue-400">
+                        , {weather.location.country}
+                      </span>
+                    )}
                   </h2>
-
                 </div>
-
-                <p className="text-yellow-400 mt-1 text-sm sm:text-base">
-                  {location?.country}
-                </p>
-
               </div>
 
               <p className="text-gray-400 text-xs sm:text-sm mt-5 sm:mt-0">
                 {formatLocalDateTime(
-                  location?.localtime
+                  weather?.location?.localtime
                 )}
               </p>
 

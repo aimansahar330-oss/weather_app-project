@@ -282,28 +282,23 @@ const getWeather = async (city) => {
     data.current?.time || "";
 
   return {
-    location: {
-      name: place.name,
+  location: {
+    name: place.name,
+    country: place.country || "",
+    countryCode: place.country_code || "",
+    localtime: now.replace("T", " "),
+    timezone: data.timezone,
+    latitude,
+    longitude,
+  },
 
-      country:
-        place.country || "",
+  current,
 
-      localtime:
-        now.replace("T", " "),
+  forecast: {
+    forecastday,
+  },
+};
 
-      timezone:
-        data.timezone,
-
-      latitude,
-      longitude,
-    },
-
-    current,
-
-    forecast: {
-      forecastday,
-    },
-  };
 };
 
 export { getWeather };
