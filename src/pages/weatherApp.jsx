@@ -382,32 +382,28 @@ const WeatherApp = () => {
           <div className="w-full mt-8 sm:mt-10 bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl shadow-2xl text-white min-h-64 px-5 sm:px-8 py-6 sm:py-8 flex flex-col sm:flex-row justify-between gap-6">
 
             {/* LOCATION */}
+{/* LOCATION */}
+<div className="flex flex-col justify-between min-w-0">
+  <div>
+    <div className="flex items-start gap-2">
+      <FaMapMarkerAlt className="text-blue-400 mt-1.5 shrink-0" />
 
-            <div className="flex flex-col justify-between">
+      <h2 className="text-xl sm:text-2xl font-bold text-white break-words">
+        {location?.name || "Unknown Location"}
 
-              <div>
+        {location?.country && (
+          <span className="text-blue-400">
+            {`, ${location.country}`}
+          </span>
+        )}
+      </h2>
+    </div>
+  </div>
 
-                <div className="flex items-center gap-2">
-
-                  <h2 className="text-xl sm:text-2xl font-bold text-white">
-                    {weather?.location?.name}
-
-                    {weather?.location?.country && (
-                      <span className="text-blue-400">
-                        , {weather.location.country}
-                      </span>
-                    )}
-                  </h2>
-                </div>
-              </div>
-
-              <p className="text-gray-400 text-xs sm:text-sm mt-5 sm:mt-0">
-                {formatLocalDateTime(
-                  weather?.location?.localtime
-                )}
-              </p>
-
-            </div>
+  <p className="text-gray-400 text-xs sm:text-sm mt-5 sm:mt-0">
+    {formatLocalDateTime(location?.localtime)}
+  </p>
+</div>
 
             {/* CURRENT TEMPERATURE */}
 
